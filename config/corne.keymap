@@ -9,7 +9,7 @@
 #define GAME    2
 #define SYM     3
 #define NUM     4
-#define FUN     5 
+#define FUN     5
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
@@ -132,19 +132,19 @@
 
             display-name = "MAC";
             bindings = <
-&kp ESCAPE      &kp Q             &kp W           &kp F           &kp P             &kp B        &kp J    &kp L              &kp U            &kp Y            &kp SEMI             &kp DEL
-&kp LEFT_SHIFT  &mt LEFT_SHIFT A  &mt LEFT_ALT R  &mt LEFT_GUI S  &mt LEFT_SHIFT T  &kp G        &kp M    &mt RIGHT_SHIFT N  &mt RIGHT_GUI E  &mt RIGHT_ALT I  &mt RIGHT_CONTROL O  &kp RIGHT_CONTROL
-&kp LEFT_GUI    &kp Z             &kp X           &kp C           &kp D             &kp V        &kp K    &kp H              &kp COMMA        &kp DOT          &kp FSLH             &caps_word
-                                                  &mo 3           &kp BACKSPACE     &kp SPACE    &kp RET  &kp TAB            &mo 4
+&kp ESCAPE      &kp Q              &kp W            &kp F            &kp P               &kp B        &kp J    &kp L                &kp U             &kp Y             &kp SEMI              &kp DEL
+&kp LEFT_SHIFT  &hml LEFT_SHIFT A  &hml LEFT_ALT R  &hml LEFT_GUI S  &shtl LEFT_SHIFT T  &kp G        &kp M    &shtr RIGHT_SHIFT N  &hmr RIGHT_GUI E  &hmr RIGHT_ALT I  &hmr RIGHT_CONTROL O  &kp RIGHT_CONTROL
+&kp LEFT_GUI    &kp Z              &kp X            &kp C            &kp D               &kp V        &kp K    &kp H                &kp COMMA         &kp DOT           &kp FSLH              &caps_word
+                                                    &mo 3            &kp BACKSPACE       &kp SPACE    &kp RET  &kp TAB              &mo 4
             >;
         };
 
         windows_layer {
             bindings = <
-&trans            &trans          &trans  &trans              &trans  &trans    &trans  &trans  &trans               &trans  &trans           &trans
-&trans            &mt LEFT_GUI A  &trans  &mt LEFT_CONTROL S  &trans  &trans    &trans  &trans  &mt RIGHT_CONTROL E  &trans  &mt RIGHT_GUI O  &kp RIGHT_GUI
-&kp LEFT_CONTROL  &trans          &trans  &trans              &trans  &trans    &trans  &trans  &trans               &trans  &trans           &trans
-                                          &trans              &trans  &trans    &trans  &trans  &trans
+&trans            &trans           &trans  &trans               &trans  &trans    &trans  &trans  &trans                &trans  &trans            &trans
+&trans            &hml LEFT_GUI A  &trans  &hml LEFT_CONTROL S  &trans  &trans    &trans  &trans  &hmr RIGHT_CONTROL E  &trans  &hmr RIGHT_GUI O  &kp RIGHT_GUI
+&kp LEFT_CONTROL  &trans           &trans  &trans               &trans  &trans    &trans  &trans  &trans                &trans  &trans            &trans
+                                           &trans               &trans  &trans    &trans  &trans  &trans
             >;
 
             label = "WIN";
