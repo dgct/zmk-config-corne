@@ -132,10 +132,20 @@
 
             display-name = "MAC";
             bindings = <
-&kp ESCAPE      &kp Q              &kp W            &kp F            &kp P               &kp B    &kp J  &kp L                &kp U             &kp Y             &kp SEMI              &kp DEL
-&kp LEFT_SHIFT  &hml LEFT_SHIFT A  &hml LEFT_ALT R  &hml LEFT_GUI S  &shtl LEFT_SHIFT T  &kp G    &kp M  &shtr RIGHT_SHIFT N  &hmr RIGHT_GUI E  &hmr RIGHT_ALT I  &hmr RIGHT_CONTROL O  &kp RIGHT_CONTROL
-&kp LEFT_GUI    &kp Z              &kp X            &kp C            &kp D               &kp V    &kp K  &kp H                &kp COMMA         &kp DOT           &kp FSLH              &caps_word
-                                                    &kp BACKSPACE    &kp SPACE           &mo 3    &mo 4  &kp ENTER            &kp TAB
+&kp ESCAPE      &kp Q                &kp W            &kp F            &kp P               &kp B    &kp J  &kp L                &kp U             &kp Y             &kp SEMI              &kp DEL
+&kp LEFT_SHIFT  &hml LEFT_CONTROL A  &hml LEFT_ALT R  &hml LEFT_GUI S  &shtl LEFT_SHIFT T  &kp G    &kp M  &shtr RIGHT_SHIFT N  &hmr RIGHT_GUI E  &hmr RIGHT_ALT I  &hmr RIGHT_CONTROL O  &kp RIGHT_CONTROL
+&kp LEFT_GUI    &kp Z                &kp X            &kp C            &kp D               &kp V    &kp K  &kp H                &kp COMMA         &kp DOT           &kp FSLH              &caps_word
+                                                      &bkdel           &kp SPACE           &mo 4    &mo 5  &kp ENTER            &kp TAB
+            >;
+        };
+
+        gralmak_layer {
+            display-name = " GRAL";
+            bindings = <
+&trans  &kp B                &kp L            &kp D            &kp W               &kp Q     &kp J   &kp F                &kp O             &kp U             &kp APOS              &trans
+&trans  &hml LEFT_CONTROL N  &hml LEFT_ALT R  &hml LEFT_GUI T  &shtl LEFT_SHIFT S  &kp G     &kp Y   &shtr RIGHT_SHIFT H  &hmr RIGHT_GUI A  &hmr RIGHT_ALT E  &hmr RIGHT_CONTROL I  &trans
+&trans  &kp Z                &kp X            &kp M            &kp C               &kp V     &kp K   &kp P                &kp COMMA         &kp DOT           &kp FSLH              &trans
+                                              &trans           &trans              &trans    &trans  &trans               &trans
             >;
         };
 
@@ -156,7 +166,7 @@
 &trans            &kp Q  &kp W  &kp E    &kp R   &kp T    &kp Y  &kp U   &kp I          &kp O    &kp P     &trans
 &trans            &kp A  &kp S  &kp D    &kp F   &kp G    &kp H  &kp J   &kp K          &kp L    &kp SEMI  &kp RIGHT_GUI
 &kp LEFT_CONTROL  &kp Z  &kp X  &kp C    &kp V   &kp B    &kp N  &kp M   &kp COMMA      &kp DOT  &kp FSLH  &trans
-                                &kp TAB  &trans  &mo 4    &mo 3  &trans  &kp BACKSPACE
+                                &kp TAB  &trans  &mo 5    &mo 4  &trans  &kp BACKSPACE
             >;
         };
 
@@ -172,7 +182,7 @@
 &trans  &kp GRAVE        &kp LESS_THAN  &kp GREATER_THAN  &kp DOUBLE_QUOTES  &kp CARET    &kp AT_SIGN  &kp SINGLE_QUOTE  &kp LEFT_BRACKET      &kp RIGHT_BRACKET      &kp PERCENT    &trans
 &trans  &kp EXCLAMATION  &kp MINUS      &kp PLUS          &kp EQUAL          &kp AMPS     &kp POUND    &kp COLON         &kp LEFT_PARENTHESIS  &kp RIGHT_PARENTHESIS  &kp SEMI       &trans
 &trans  &kp TILDE        &kp PERIOD     &kp SLASH         &kp ASTRK          &kp PIPE     &kp DOLLAR   &kp UNDER         &kp LBRC              &kp RBRC               &kp BACKSLASH  &trans
-                                        &trans            &trans             &trans       &mo 5        &trans            &trans
+                                        &trans            &trans             &trans       &mo 6        &trans            &trans
             >;
         };
 
@@ -188,15 +198,15 @@
 &trans  &kp N1          &kp N2        &kp N3          &kp N4     &kp N5    &kp N6  &kp N7  &kp N8  &kp N9  &kp N0     &trans
 &trans  &none           &none         &none           &none      &none     &none   &kp N4  &kp N5  &kp N6  &kp DOT    &trans
 &trans  &kp LEFT_ARROW  &kp UP_ARROW  &kp DOWN_ARROW  &kp RIGHT  &none     &kp N0  &kp N1  &kp N2  &kp N3  &kp MINUS  &trans
-                                      &trans          &trans     &mo 5     &trans  &trans  &trans
+                                      &trans          &trans     &mo 6     &trans  &trans  &trans
             >;
         };
 
         function_layer {
             bindings = <
-&trans  &kp F1  &kp F2   &kp F3   &kp F4   &tog 2    &none   &none   &none   &none  &out OUT_TOG  &trans
-&trans  &kp F5  &kp F6   &kp F7   &kp F8   &tog 1    &none   &none   &none   &none  &bt BT_NXT    &trans
-&trans  &kp F9  &kp F10  &kp F11  &kp F12  &none     &none   &none   &none   &none  &bt BT_CLR    &trans
+&trans  &kp F1  &kp F2   &kp F3   &kp F4   &tog 3    &none   &none   &none   &none  &out OUT_TOG  &trans
+&trans  &kp F5  &kp F6   &kp F7   &kp F8   &tog 2    &none   &none   &none   &none  &bt BT_NXT    &trans
+&trans  &kp F9  &kp F10  &kp F11  &kp F12  &tog 1    &none   &none   &none   &none  &bt BT_CLR    &trans
                          &trans   &trans   &trans    &trans  &trans  &trans
             >;
 
