@@ -132,19 +132,19 @@
 
             display-name = "MAC";
             bindings = <
-&kp ESCAPE      &kp Q                &kp W            &kp F            &kp P               &kp B    &kp J  &kp L                &kp U             &kp Y             &kp SEMI              &kp DEL
+&kp ESCAPE      &kp Q                &kp W            &kp F            &kp P               &kp B    &kp J  &kp L                &kp U             &kp Y             &kp APOS              &kp DEL
 &kp LEFT_SHIFT  &hml LEFT_CONTROL A  &hml LEFT_ALT R  &hml LEFT_GUI S  &shtl LEFT_SHIFT T  &kp G    &kp M  &shtr RIGHT_SHIFT N  &hmr RIGHT_GUI E  &hmr RIGHT_ALT I  &hmr RIGHT_CONTROL O  &kp RIGHT_CONTROL
 &kp LEFT_GUI    &kp Z                &kp X            &kp C            &kp D               &kp V    &kp K  &kp H                &kp COMMA         &kp DOT           &kp FSLH              &caps_word
                                                       &bkdel           &kp SPACE           &mo 4    &mo 5  &kp ENTER            &kp TAB
             >;
         };
 
-        rain_layer {
-            display-name = "RAIN";
+        gralmak_layer {
+            display-name = "GRAPH";
             bindings = <
-&trans  &kp F                &kp D            &kp L            &kp G               &kp V     &kp Q   &kp R                &kp U             &kp O             &kp COMMA             &trans
-&trans  &hml LEFT_CONTROL S  &hml LEFT_ALT T  &hml LEFT_GUI H  &shtl LEFT_SHIFT C  &kp Y     &kp J   &shtr RIGHT_SHIFT N  &hmr RIGHT_GUI E  &hmr RIGHT_ALT A  &hmr RIGHT_CONTROL I  &trans
-&trans  &kp Z                &kp K            &kp M            &kp P               &kp W     &kp X   &kp B                &kp SEMI          &kp APOS          &kp PERIOD            &trans
+&trans  &kp B                &kp L            &kp D            &kp W               &kp Q     &kp J   &kp F                &kp O             &kp U             &kp APOS              &trans
+&trans  &hml LEFT_CONTROL N  &hml LEFT_ALT R  &hml LEFT_GUI T  &shtl LEFT_SHIFT S  &kp G     &kp Y   &shtr RIGHT_SHIFT H  &hmr RIGHT_GUI A  &hmr RIGHT_ALT E  &hmr RIGHT_CONTROL I  &trans
+&trans  &kp Z                &kp X            &kp M            &kp C               &kp V     &kp K   &kp P                &kp COMMA         &kp PERIOD        &kp SLASH             &trans
                                               &trans           &trans              &trans    &trans  &trans               &trans
             >;
         };
