@@ -129,7 +129,7 @@
 &kp ESC    &kp B                &kp L            &kp D            &kp W               &kp Q    &kp J  &kp F                &kp O             &kp U             &kp APOS              &caps_word
 &kp LSHFT  &hml LEFT_CONTROL N  &hml LEFT_ALT R  &hml LEFT_GUI T  &shtl LEFT_SHIFT S  &kp G    &kp Y  &shtr RIGHT_SHIFT H  &hmr RIGHT_GUI A  &hmr RIGHT_ALT E  &hmr RIGHT_CONTROL I  &kp RIGHT_CONTROL
 &kp LGUI   &kp Z                &kp X            &kp M            &kp C               &kp V    &kp K  &kp P                &kp COMMA         &kp PERIOD        &kp SLASH             &kp RIGHT_ALT
-                                                 &bkdel           &kp SPACE           &mo 5    &mo 5  &kp ENTER            &kp TAB
+                                                 &bkdel           &kp SPACE           &mo 4    &mo 5  &kp ENTER            &kp TAB
             >;
         };
 
@@ -150,7 +150,7 @@
 &trans            &kp Q  &kp W  &kp E    &kp R   &kp T    &kp Y  &kp U   &kp I          &kp O    &kp P     &trans
 &trans            &kp A  &kp S  &kp D    &kp F   &kp G    &kp H  &kp J   &kp K          &kp L    &kp SEMI  &kp RIGHT_GUI
 &kp LEFT_CONTROL  &kp Z  &kp X  &kp C    &kp V   &kp B    &kp N  &kp M   &kp COMMA      &kp DOT  &kp FSLH  &trans
-                                &kp TAB  &trans  &mo 5    &mo 5  &trans  &kp BACKSPACE
+                                &kp TAB  &trans  &mo 5    &mo 4  &trans  &kp BACKSPACE
             >;
         };
 
