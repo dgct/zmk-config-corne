@@ -124,35 +124,19 @@
         compatible = "zmk,keymap";
 
         default_layer {
-            // -----------------------------------------------------------------------------------------
-            // |  TAB |  Q  |  W  |  E  |  R  |  T  |   |  Y  |  U   |  I  |  O  |  P  | BKSP |
-            // | CTRL |  A  |  S  |  D  |  F  |  G  |   |  H  |  J   |  K  |  L  |  ;  |  '   |
-            // | SHFT |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M   |  ,  |  .  |  /  | ESC  |
-            //                    | GUI | LWR | SPC |   | ENT | RSE  | ALT |
-
             display-name = "MAC";
             bindings = <
-&kp ESCAPE      &kp Q                &kp W            &kp F            &kp P               &kp B    &kp J  &kp L                &kp U             &kp Y             &kp APOS              &kp DEL
-&kp LEFT_SHIFT  &hml LEFT_CONTROL A  &hml LEFT_ALT R  &hml LEFT_GUI S  &shtl LEFT_SHIFT T  &kp G    &kp M  &shtr RIGHT_SHIFT N  &hmr RIGHT_GUI E  &hmr RIGHT_ALT I  &hmr RIGHT_CONTROL O  &kp RIGHT_CONTROL
-&kp LEFT_GUI    &kp Z                &kp X            &kp C            &kp D               &kp V    &kp K  &kp H                &kp COMMA         &kp DOT           &kp FSLH              &caps_word
-                                                      &bkdel           &kp SPACE           &mo 4    &mo 5  &kp ENTER            &kp TAB
-            >;
-        };
-
-        gralmak_layer {
-            display-name = "GRAL";
-            bindings = <
-&trans  &kp B                &kp L            &kp D            &kp W               &kp Q     &kp J   &kp F                &kp O             &kp U             &kp APOS              &trans
-&trans  &hml LEFT_CONTROL N  &hml LEFT_ALT R  &hml LEFT_GUI T  &shtl LEFT_SHIFT S  &kp G     &kp Y   &shtr RIGHT_SHIFT H  &hmr RIGHT_GUI A  &hmr RIGHT_ALT E  &hmr RIGHT_CONTROL I  &trans
-&trans  &kp Z                &kp X            &kp M            &kp C               &kp V     &kp K   &kp P                &kp COMMA         &kp PERIOD        &kp SLASH             &trans
-                                              &trans           &trans              &trans    &trans  &trans               &trans
+&kp ESC    &kp B                &kp L            &kp D            &kp W               &kp Q    &kp J  &kp F                &kp O             &kp U             &kp APOS              &caps_word
+&kp LSHFT  &hml LEFT_CONTROL N  &hml LEFT_ALT R  &hml LEFT_GUI T  &shtl LEFT_SHIFT S  &kp G    &kp Y  &shtr RIGHT_SHIFT H  &hmr RIGHT_GUI A  &hmr RIGHT_ALT E  &hmr RIGHT_CONTROL I  &kp RIGHT_CONTROL
+&kp LGUI   &kp Z                &kp X            &kp M            &kp C               &kp V    &kp K  &kp P                &kp COMMA         &kp PERIOD        &kp SLASH             &kp RIGHT_ALT
+                                                 &bkdel           &kp SPACE           &mo 5    &mo 5  &kp ENTER            &kp TAB
             >;
         };
 
         windows_layer {
             bindings = <
 &trans            &trans           &trans  &trans               &trans  &trans    &trans  &trans  &trans                &trans  &trans            &trans
-&trans            &hml LEFT_GUI A  &trans  &hml LEFT_CONTROL S  &trans  &trans    &trans  &trans  &hmr RIGHT_CONTROL E  &trans  &hmr RIGHT_GUI O  &kp RIGHT_GUI
+&trans            &hml LEFT_GUI N  &trans  &hml LEFT_CONTROL T  &trans  &trans    &trans  &trans  &hmr RIGHT_CONTROL A  &trans  &hmr RIGHT_GUI I  &kp RIGHT_GUI
 &kp LEFT_CONTROL  &trans           &trans  &trans               &trans  &trans    &trans  &trans  &trans                &trans  &trans            &trans
                                            &trans               &trans  &trans    &trans  &trans  &trans
             >;
@@ -166,7 +150,23 @@
 &trans            &kp Q  &kp W  &kp E    &kp R   &kp T    &kp Y  &kp U   &kp I          &kp O    &kp P     &trans
 &trans            &kp A  &kp S  &kp D    &kp F   &kp G    &kp H  &kp J   &kp K          &kp L    &kp SEMI  &kp RIGHT_GUI
 &kp LEFT_CONTROL  &kp Z  &kp X  &kp C    &kp V   &kp B    &kp N  &kp M   &kp COMMA      &kp DOT  &kp FSLH  &trans
-                                &kp TAB  &trans  &mo 5    &mo 4  &trans  &kp BACKSPACE
+                                &kp TAB  &trans  &mo 5    &mo 5  &trans  &kp BACKSPACE
+            >;
+        };
+
+        colemak_layer {
+            // -----------------------------------------------------------------------------------------
+            // |  TAB |  Q  |  W  |  E  |  R  |  T  |   |  Y  |  U   |  I  |  O  |  P  | BKSP |
+            // | CTRL |  A  |  S  |  D  |  F  |  G  |   |  H  |  J   |  K  |  L  |  ;  |  '   |
+            // | SHFT |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M   |  ,  |  .  |  /  | ESC  |
+            //                    | GUI | LWR | SPC |   | ENT | RSE  | ALT |
+
+            display-name = "MAC";
+            bindings = <
+&trans  &kp Q                &kp W            &kp F            &kp P               &kp B     &kp J   &kp L                &kp U             &kp Y             &kp APOS              &trans
+&trans  &hml LEFT_CONTROL A  &hml LEFT_ALT R  &hml LEFT_GUI S  &shtl LEFT_SHIFT T  &kp G     &kp M   &shtr RIGHT_SHIFT N  &hmr RIGHT_GUI E  &hmr RIGHT_ALT I  &hmr RIGHT_CONTROL O  &trans
+&trans  &kp Z                &kp X            &kp C            &kp D               &kp V     &kp K   &kp H                &kp COMMA         &kp DOT           &kp FSLH              &trans
+                                              &trans           &trans              &trans    &trans  &trans               &trans
             >;
         };
 
@@ -204,9 +204,9 @@
 
         function_layer {
             bindings = <
-&trans  &kp F1  &kp F2   &kp F3   &kp F4   &tog 3    &none   &none   &none   &none  &out OUT_TOG  &trans
-&trans  &kp F5  &kp F6   &kp F7   &kp F8   &tog 2    &none   &none   &none   &none  &bt BT_NXT    &trans
-&trans  &kp F9  &kp F10  &kp F11  &kp F12  &tog 1    &none   &none   &none   &none  &bt BT_CLR    &trans
+&trans  &kp F1  &kp F2   &kp F3   &kp F4   &tog 2    &none   &none   &none   &none  &out OUT_TOG  &trans
+&trans  &kp F5  &kp F6   &kp F7   &kp F8   &tog 1    &none   &none   &none   &none  &bt BT_NXT    &trans
+&trans  &kp F9  &kp F10  &kp F11  &kp F12  &tog 3    &none   &none   &none   &none  &bt BT_CLR    &trans
                          &trans   &trans   &trans    &trans  &trans  &trans
             >;
 
