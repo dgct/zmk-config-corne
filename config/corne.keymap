@@ -161,7 +161,7 @@
             // | SHFT |  Z  |  X  |  C  |  V  |  B  |   |  N  |  M   |  ,  |  .  |  /  | ESC  |
             //                    | GUI | LWR | SPC |   | ENT | RSE  | ALT |
 
-            display-name = "MAC";
+            display-name = "COLE";
             bindings = <
 &trans  &kp Q                &kp W            &kp F            &kp P               &kp B     &kp J   &kp L                &kp U             &kp Y             &kp APOS              &trans
 &trans  &hml LEFT_CONTROL A  &hml LEFT_ALT R  &hml LEFT_GUI S  &shtl LEFT_SHIFT T  &kp G     &kp M   &shtr RIGHT_SHIFT N  &hmr RIGHT_GUI E  &hmr RIGHT_ALT I  &hmr RIGHT_CONTROL O  &trans
