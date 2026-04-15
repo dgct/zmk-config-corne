@@ -35,12 +35,12 @@
         status = "okay";
 
         device = <&mouse_ps2_split>;
-        input-processors = <&tp_xy_transform INPUT_TRANSFORM_X_INVERT &zip_xy_scaler 3 2>;
+        input-processors = <&tp_xy_transform INPUT_TRANSFORM_X_INVERT &zip_xy_scaler 2 1>;
 
         /* Scroll mode: trackpoint becomes scroll wheel on FUN layer */
         scroll_mode {
             layers = <5>;
-            input-processors = <&zip_xy_scaler 1 16 &zip_xy_to_scroll_mapper &zip_scroll_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT) &zip_scroll_scaler 1 8>;
+            input-processors = <&zip_xy_scaler 1 16 &zip_xy_to_scroll_mapper &zip_scroll_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT) &zip_scroll_scaler 1 2>;
         };
     };
 };
