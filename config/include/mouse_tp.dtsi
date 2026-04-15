@@ -99,7 +99,7 @@
 
       // The maximum mouse movement speed the TP will accelarate to
       // (Default: 97)
-      tp-val6-upper-speed = <200>;
+      tp-val6-upper-speed = <255>;
 
 
       // Negative Inertia (Default: 6)
