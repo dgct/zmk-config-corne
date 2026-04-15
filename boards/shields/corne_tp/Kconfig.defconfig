@@ -13,12 +13,9 @@ config ZMK_KEYBOARD_NAME
 config ZMK_SPLIT_ROLE_CENTRAL
     default y
 
-# Custom widget replaces the stock nice_view widget
-config NICE_VIEW_WIDGET_STATUS
-    default n
-
+# Custom widget replaces the stock nice_view widget (disabled in corne_tp_left.conf)
 config CORNE_TP_CUSTOM_WIDGET
-    bool "Corne TP custom nice!view widget with peripheral battery"
+    bool "Corne TP custom nice_view widget with peripheral battery"
     default y if ZMK_DISPLAY
     select LV_FONT_MONTSERRAT_16
     select LV_FONT_MONTSERRAT_18
