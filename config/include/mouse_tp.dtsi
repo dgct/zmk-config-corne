@@ -161,9 +161,9 @@
       status = "okay";
     };
 
-    &mouse_ps2_input_listener {
-      status = "okay";
-    };
+    // The input listener is enabled on the central (left) side via
+    // corne_tp_left.overlay. On the peripheral (right), the input-split
+    // node forwards trackpoint events to central automatically.
 
     #ifdef MOUSE_PS2_DRIVER_UART
 

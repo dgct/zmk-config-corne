@@ -545,11 +545,22 @@
 #endif
     };
 
+    split_inputs {
+        #address-cells = <1>;
+        #size-cells = <0>;
+
+        mouse_ps2_split: mouse_ps2_split@0 {
+            compatible = "zmk,input-split";
+            reg = <0>;
+            device = <&mouse_ps2>;
+        };
+    };
+
     mouse_ps2_input_listener: mouse_ps2_input_listener {
         compatible = "zmk,input-listener";
         status = "disabled";
 
-        device = <&mouse_ps2>;
+        device = <&mouse_ps2_split>;
         input-processors = <&tp_xy_transform INPUT_TRANSFORM_X_INVERT>;
 
 		// Some of the available settings depend on the keymap. So they
