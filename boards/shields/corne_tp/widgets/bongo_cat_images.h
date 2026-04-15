@@ -6,8 +6,8 @@
 
 #include <lvgl.h>
 
-#define BONGO_W 64
-#define BONGO_H 36
+#define BONGO_W 54
+#define BONGO_H 32
 
 #define BONGO_IDLE_COUNT 5
 #define BONGO_PREP_COUNT 1

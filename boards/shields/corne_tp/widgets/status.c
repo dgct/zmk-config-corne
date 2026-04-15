@@ -112,7 +112,7 @@ static void draw_top(lv_obj_t *widget, const struct status_state *state) {
     }
     lv_draw_image_dsc_t img_dsc;
     lv_draw_image_dsc_init(&img_dsc);
-    canvas_draw_img(canvas, 2, 30, frame, &img_dsc);
+    canvas_draw_img(canvas, 7, 36, frame, &img_dsc);
 
     // Rotate canvas
     rotate_canvas(canvas);

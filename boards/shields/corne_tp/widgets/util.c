@@ -31,14 +31,14 @@ void draw_battery(lv_obj_t *canvas, const struct status_state *state) {
     canvas_draw_rect(canvas, 1, 3, 27, 11, &rect_black_dsc);   // inner clear
 
     // Central battery fill (top half, 5px)
-    canvas_draw_rect(canvas, 2, 3, (state->battery + 2) / 4, 5, &rect_white_dsc);
+    canvas_draw_rect(canvas, 1, 3, state->battery * 27 / 100, 5, &rect_white_dsc);
 
     // Horizontal divider
     canvas_draw_rect(canvas, 1, 8, 27, 1, &rect_white_dsc);
 
     // Peripheral battery fill (bottom half, 5px)
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
-    canvas_draw_rect(canvas, 2, 9, (state->peripheral_battery + 2) / 4, 5, &rect_white_dsc);
+    canvas_draw_rect(canvas, 1, 9, state->peripheral_battery * 27 / 100, 5, &rect_white_dsc);
 #endif
 
     // Battery nub (centered on right side)
