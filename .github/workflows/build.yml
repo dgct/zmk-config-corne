@@ -2,4 +2,4 @@ on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
-    uses: infused-kim/zmk/.github/workflows/build-user-config.yml@pr-testing/mouse_ps2_module_base_urob
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3
