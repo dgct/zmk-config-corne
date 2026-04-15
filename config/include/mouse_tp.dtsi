@@ -93,7 +93,8 @@
     &mouse_ps2 {
 
       // How sensitive the TP is (Default: 128)
-      // tp-sensitivity = <128>;
+      // Lowered for a more gradual acceleration ramp
+      tp-sensitivity = <100>;
 
 
       // The maximum mouse movement speed the TP will accelarate to
@@ -102,8 +103,8 @@
 
 
       // Negative Inertia (Default: 6)
-      // Makes the TP feel more responsive and "overshoot" less.
-      // tp-neg-inertia = <6>;
+      // Raised for snappier deceleration / less overshoot
+      tp-neg-inertia = <10>;
 
 
       // Enable clicking by tapping on the TP.
