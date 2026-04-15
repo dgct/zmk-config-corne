@@ -27,7 +27,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/endpoints.h>
 #include <zmk/keymap.h>
 #include <zmk/wpm.h>
-#include "bongo_cat_frames.h"
+#include "bongo_cat_images.h"
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
 #include <zmk/split/central.h>
@@ -40,25 +40,6 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 #define BONGO_TAP_SPEED 40
 
 static uint8_t bongo_frame = 0;
-
-static void blit_bongo(lv_obj_t *canvas, const uint8_t *frame, lv_coord_t x, lv_coord_t y) {
-    uint8_t *buf = lv_canvas_get_draw_buf(canvas)->data;
-    const uint32_t stride = lv_draw_buf_width_to_stride(CANVAS_SIZE, CANVAS_COLOR_FORMAT);
-    const uint8_t fg = IS_ENABLED(CONFIG_NICE_VIEW_WIDGET_INVERTED) ? 0xFF : 0x00;
-
-    for (int r = 0; r < BONGO_H; r++) {
-        int py = y + r;
-        if (py >= CANVAS_SIZE) break;
-        for (int c = 0; c < BONGO_W; c++) {
-            if (frame[r * BONGO_STRIDE + c / 8] & (0x80 >> (c % 8))) {
-                int px = x + c;
-                if (px < CANVAS_SIZE) {
-                    buf[py * stride + px] = fg;
-                }
-            }
-        }
-    }
-}
 
 struct output_status_state {
     struct zmk_endpoint_instance selected_endpoint;
@@ -119,7 +100,7 @@ static void draw_top(lv_obj_t *widget, const struct status_state *state) {
     canvas_draw_text(canvas, 0, 0, CANVAS_SIZE, &label_dsc, output_text);
 
     // Draw bongo cat below battery + output area
-    const uint8_t *frame;
+    const lv_image_dsc_t *frame;
     uint8_t wpm = state->wpm;
 
     if (wpm >= BONGO_TAP_SPEED) {
@@ -129,7 +110,9 @@ static void draw_top(lv_obj_t *widget, const struct status_state *state) {
     } else {
         frame = bongo_idle[bongo_frame % BONGO_IDLE_COUNT];
     }
-    blit_bongo(canvas, frame, 2, 30);
+    lv_draw_image_dsc_t img_dsc;
+    lv_draw_image_dsc_init(&img_dsc);
+    canvas_draw_img(canvas, 2, 30, frame, &img_dsc);
 
     // Rotate canvas
     rotate_canvas(canvas);

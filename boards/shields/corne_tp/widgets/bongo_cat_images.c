@@ -1,20 +1,32 @@
 /*
- * Bongo cat animation frames for nice!view display.
- * 128x32 SSD1306 art -> 64x36 LVGL canvas.
+ * Bongo cat animation frames as native LVGL I1 indexed images.
+ * 64x36 pixels, 1bpp MSB-first, with 8-byte I1 palette prefix.
  *
- * Pipeline: decode -> fill interior -> grayscale composite ->
- *   area-average downsample -> Bayer ordered dither ->
- *   Sobel edge reinforcement -> orphan removal
+ * Original art: 128x32 SSD1306 bongo cat
+ * Pipeline: fill interior -> grayscale composite -> area-average
+ *   downsample -> Bayer ordered dither -> Sobel edge reinforce -> orphan removal
  */
 
-#pragma once
+#include <lvgl.h>
+#include "bongo_cat_images.h"
 
-#define BONGO_W 64
-#define BONGO_H 36
-#define BONGO_STRIDE 8
-#define BONGO_FRAME_BYTES (BONGO_STRIDE * BONGO_H)
+/*
+ * I1 palette: 2 colors x 4 bytes (B, G, R, A)
+ *   Index 0 = transparent (alpha=0, does not overwrite background)
+ *   Index 1 = foreground (black or white depending on inversion)
+ */
+#if CONFIG_NICE_VIEW_WIDGET_INVERTED
+#define I1_PALETTE \
+    0x00, 0x00, 0x00, 0x00, /* index 0: transparent */ \
+    0xff, 0xff, 0xff, 0xff  /* index 1: white (inverted) */
+#else
+#define I1_PALETTE \
+    0x00, 0x00, 0x00, 0x00, /* index 0: transparent */ \
+    0x00, 0x00, 0x00, 0xff  /* index 1: black (normal) */
+#endif
 
-static const uint8_t bongo_idle_0[] = {
+static const uint8_t bongo_idle_0_map[] = {
+    I1_PALETTE,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -53,7 +65,16 @@ static const uint8_t bongo_idle_0[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const uint8_t bongo_idle_1[] = {
+const lv_image_dsc_t bongo_idle_0 = {
+    .header.cf = LV_COLOR_FORMAT_I1,
+    .header.w = 64,
+    .header.h = 36,
+    .data_size = 296,  /* 8 palette + 288 pixels */
+    .data = bongo_idle_0_map,
+};
+
+static const uint8_t bongo_idle_1_map[] = {
+    I1_PALETTE,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -92,7 +113,16 @@ static const uint8_t bongo_idle_1[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const uint8_t bongo_idle_2[] = {
+const lv_image_dsc_t bongo_idle_1 = {
+    .header.cf = LV_COLOR_FORMAT_I1,
+    .header.w = 64,
+    .header.h = 36,
+    .data_size = 296,  /* 8 palette + 288 pixels */
+    .data = bongo_idle_1_map,
+};
+
+static const uint8_t bongo_idle_2_map[] = {
+    I1_PALETTE,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -131,7 +161,16 @@ static const uint8_t bongo_idle_2[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const uint8_t bongo_idle_3[] = {
+const lv_image_dsc_t bongo_idle_2 = {
+    .header.cf = LV_COLOR_FORMAT_I1,
+    .header.w = 64,
+    .header.h = 36,
+    .data_size = 296,  /* 8 palette + 288 pixels */
+    .data = bongo_idle_2_map,
+};
+
+static const uint8_t bongo_idle_3_map[] = {
+    I1_PALETTE,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -170,7 +209,16 @@ static const uint8_t bongo_idle_3[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const uint8_t bongo_idle_4[] = {
+const lv_image_dsc_t bongo_idle_3 = {
+    .header.cf = LV_COLOR_FORMAT_I1,
+    .header.w = 64,
+    .header.h = 36,
+    .data_size = 296,  /* 8 palette + 288 pixels */
+    .data = bongo_idle_3_map,
+};
+
+static const uint8_t bongo_idle_4_map[] = {
+    I1_PALETTE,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -209,7 +257,16 @@ static const uint8_t bongo_idle_4[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const uint8_t bongo_prep_0[] = {
+const lv_image_dsc_t bongo_idle_4 = {
+    .header.cf = LV_COLOR_FORMAT_I1,
+    .header.w = 64,
+    .header.h = 36,
+    .data_size = 296,  /* 8 palette + 288 pixels */
+    .data = bongo_idle_4_map,
+};
+
+static const uint8_t bongo_prep_0_map[] = {
+    I1_PALETTE,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -248,7 +305,16 @@ static const uint8_t bongo_prep_0[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const uint8_t bongo_tap_0[] = {
+const lv_image_dsc_t bongo_prep_0 = {
+    .header.cf = LV_COLOR_FORMAT_I1,
+    .header.w = 64,
+    .header.h = 36,
+    .data_size = 296,  /* 8 palette + 288 pixels */
+    .data = bongo_prep_0_map,
+};
+
+static const uint8_t bongo_tap_0_map[] = {
+    I1_PALETTE,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -287,7 +353,16 @@ static const uint8_t bongo_tap_0[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const uint8_t bongo_tap_1[] = {
+const lv_image_dsc_t bongo_tap_0 = {
+    .header.cf = LV_COLOR_FORMAT_I1,
+    .header.w = 64,
+    .header.h = 36,
+    .data_size = 296,  /* 8 palette + 288 pixels */
+    .data = bongo_tap_0_map,
+};
+
+static const uint8_t bongo_tap_1_map[] = {
+    I1_PALETTE,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -326,22 +401,27 @@ static const uint8_t bongo_tap_1[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const uint8_t *const bongo_idle[] = {
-    bongo_idle_0,
-    bongo_idle_1,
-    bongo_idle_2,
-    bongo_idle_3,
-    bongo_idle_4,
+const lv_image_dsc_t bongo_tap_1 = {
+    .header.cf = LV_COLOR_FORMAT_I1,
+    .header.w = 64,
+    .header.h = 36,
+    .data_size = 296,  /* 8 palette + 288 pixels */
+    .data = bongo_tap_1_map,
 };
-#define BONGO_IDLE_COUNT 5
 
-static const uint8_t *const bongo_prep[] = {
-    bongo_prep_0,
+const lv_image_dsc_t *const bongo_idle[] = {
+    &bongo_idle_0,
+    &bongo_idle_1,
+    &bongo_idle_2,
+    &bongo_idle_3,
+    &bongo_idle_4,
 };
-#define BONGO_PREP_COUNT 1
 
-static const uint8_t *const bongo_tap[] = {
-    bongo_tap_0,
-    bongo_tap_1,
+const lv_image_dsc_t *const bongo_prep[] = {
+    &bongo_prep_0,
 };
-#define BONGO_TAP_COUNT 2
+
+const lv_image_dsc_t *const bongo_tap[] = {
+    &bongo_tap_0,
+    &bongo_tap_1,
+};
