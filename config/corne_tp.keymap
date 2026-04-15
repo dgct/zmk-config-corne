@@ -14,7 +14,7 @@
 #define NUM     4
 #define FUN     5
 
-#include <config/include/mouse_tp.dtsi>
+#include "include/mouse_tp.dtsi"
 
 #include <behaviors.dtsi>
 #include <dt-bindings/zmk/bt.h>
