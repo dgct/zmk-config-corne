@@ -20,17 +20,49 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/events/battery_state_changed.h>
 #include <zmk/events/ble_active_profile_changed.h>
 #include <zmk/events/endpoint_changed.h>
+#include <zmk/events/wpm_state_changed.h>
 #include <zmk/events/layer_state_changed.h>
 #include <zmk/usb.h>
 #include <zmk/ble.h>
 #include <zmk/endpoints.h>
 #include <zmk/keymap.h>
+#include <zmk/wpm.h>
+#include "bongo_cat_frames.h"
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
 #include <zmk/split/central.h>
 #endif
 
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
+
+// --- Bongo cat animation state ---
+#define BONGO_IDLE_SPEED 20
+#define BONGO_TAP_SPEED 40
+#define BONGO_FRAME_DURATION K_MSEC(200)
+
+static uint8_t bongo_frame = 0;
+static struct k_work_delayable bongo_work;
+static void bongo_tick(struct k_work *work);
+
+static void blit_bongo(lv_obj_t *canvas, const uint8_t *frame, lv_coord_t x, lv_coord_t y) {
+    lv_draw_rect_dsc_t fg;
+    init_rect_dsc(&fg, LVGL_FOREGROUND);
+    for (int r = 0; r < BONGO_H; r++) {
+        for (int bi = 0; bi < BONGO_STRIDE; bi++) {
+            uint8_t byte = frame[r * BONGO_STRIDE + bi];
+            if (!byte) continue;
+            for (int bit = 0; bit < 8; bit++) {
+                if (byte & (0x80 >> bit)) {
+                    int px = x + bi * 8 + bit;
+                    int py = y + r;
+                    if (px < CANVAS_SIZE && py < CANVAS_SIZE) {
+                        canvas_draw_rect(canvas, px, py, 1, 1, &fg);
+                    }
+                }
+            }
+        }
+    }
+}
 
 struct output_status_state {
     struct zmk_endpoint_instance selected_endpoint;
@@ -44,6 +76,10 @@ struct output_status_state {
 struct layer_status_state {
     zmk_keymap_layer_index_t index;
     const char *label;
+};
+
+struct wpm_status_state {
+    uint8_t wpm;
 };
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
@@ -147,22 +183,33 @@ static void draw_middle(lv_obj_t *widget, const struct status_state *state) {
 static void draw_bottom(lv_obj_t *widget, const struct status_state *state) {
     lv_obj_t *canvas = lv_obj_get_child(widget, 2);
 
-    lv_draw_rect_dsc_t rect_black_dsc;
-    init_rect_dsc(&rect_black_dsc, LVGL_BACKGROUND);
     lv_draw_label_dsc_t label_dsc;
     init_label_dsc(&label_dsc, LVGL_FOREGROUND, &lv_font_montserrat_14, LV_TEXT_ALIGN_CENTER);
 
     // Fill background
     lv_canvas_fill_bg(canvas, LVGL_BACKGROUND, LV_OPA_COVER);
 
-    // Draw layer
+    // Draw layer name at top of canvas
     if (state->layer_label == NULL || strlen(state->layer_label) == 0) {
         char text[10] = {};
         sprintf(text, "LAYER %i", state->layer_index);
-        canvas_draw_text(canvas, 0, 5, 68, &label_dsc, text);
+        canvas_draw_text(canvas, 0, 0, 68, &label_dsc, text);
     } else {
-        canvas_draw_text(canvas, 0, 5, 68, &label_dsc, state->layer_label);
+        canvas_draw_text(canvas, 0, 0, 68, &label_dsc, state->layer_label);
     }
+
+    // Draw bongo cat below the layer name
+    const uint8_t *frame;
+    uint8_t wpm = state->wpm;
+
+    if (wpm >= BONGO_TAP_SPEED) {
+        frame = bongo_tap[bongo_frame % BONGO_TAP_COUNT];
+    } else if (wpm > BONGO_IDLE_SPEED) {
+        frame = bongo_prep[bongo_frame % BONGO_PREP_COUNT];
+    } else {
+        frame = bongo_idle[bongo_frame % BONGO_IDLE_COUNT];
+    }
+    blit_bongo(canvas, frame, 2, 18);
 
     // Rotate canvas
     rotate_canvas(canvas);
@@ -315,6 +362,37 @@ ZMK_DISPLAY_WIDGET_LISTENER(widget_layer_status, struct layer_status_state, laye
 
 ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
 
+// --- WPM status (drives bongo cat animation) ---
+
+static void set_wpm_status(struct zmk_widget_status *widget, struct wpm_status_state state) {
+    widget->state.wpm = state.wpm;
+    draw_bottom(widget->obj, &widget->state);
+}
+
+static void wpm_status_update_cb(struct wpm_status_state state) {
+    struct zmk_widget_status *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_wpm_status(widget, state); }
+}
+
+static struct wpm_status_state wpm_status_get_state(const zmk_event_t *eh) {
+    return (struct wpm_status_state){.wpm = zmk_wpm_get_state()};
+}
+
+ZMK_DISPLAY_WIDGET_LISTENER(widget_wpm_status, struct wpm_status_state, wpm_status_update_cb,
+                            wpm_status_get_state)
+ZMK_SUBSCRIPTION(widget_wpm_status, zmk_wpm_state_changed);
+
+// --- Bongo cat frame timer ---
+
+static void bongo_tick(struct k_work *work) {
+    bongo_frame++;
+    struct zmk_widget_status *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        draw_bottom(widget->obj, &widget->state);
+    }
+    k_work_schedule(&bongo_work, BONGO_FRAME_DURATION);
+}
+
 // --- Init ---
 
 int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
@@ -337,6 +415,11 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
 #endif
     widget_output_status_init();
     widget_layer_status_init();
+    widget_wpm_status_init();
+
+    // Start bongo cat animation timer
+    k_work_init_delayable(&bongo_work, bongo_tick);
+    k_work_schedule(&bongo_work, BONGO_FRAME_DURATION);
 
     return 0;
 }

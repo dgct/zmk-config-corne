@@ -37,6 +37,7 @@ struct status_state {
     bool profiles_bonded[NICEVIEW_PROFILE_COUNT];
     uint8_t layer_index;
     const char *layer_label;
+    uint8_t wpm;
 #else
     bool connected;
 #endif
