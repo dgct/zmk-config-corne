@@ -26,11 +26,24 @@ void draw_battery(lv_obj_t *canvas, const struct status_state *state) {
     lv_draw_rect_dsc_t rect_white_dsc;
     init_rect_dsc(&rect_white_dsc, LVGL_FOREGROUND);
 
-    canvas_draw_rect(canvas, 0, 2, 29, 12, &rect_white_dsc);
-    canvas_draw_rect(canvas, 1, 3, 27, 10, &rect_black_dsc);
+    // Split battery: top half = central, bottom half = peripheral
+    canvas_draw_rect(canvas, 0, 2, 29, 22, &rect_white_dsc);   // outer border
+    canvas_draw_rect(canvas, 1, 3, 27, 20, &rect_black_dsc);   // inner clear
+
+    // Central battery fill (top half)
     canvas_draw_rect(canvas, 2, 4, (state->battery + 2) / 4, 8, &rect_white_dsc);
-    canvas_draw_rect(canvas, 30, 5, 3, 6, &rect_white_dsc);
-    canvas_draw_rect(canvas, 31, 6, 1, 4, &rect_black_dsc);
+
+    // Horizontal dividing line
+    canvas_draw_rect(canvas, 1, 12, 27, 1, &rect_white_dsc);
+
+    // Peripheral battery fill (bottom half)
+#if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
+    canvas_draw_rect(canvas, 2, 14, (state->peripheral_battery + 2) / 4, 8, &rect_white_dsc);
+#endif
+
+    // Battery nub (centered on right side)
+    canvas_draw_rect(canvas, 30, 8, 3, 8, &rect_white_dsc);
+    canvas_draw_rect(canvas, 31, 9, 1, 6, &rect_black_dsc);
 
     if (state->charging) {
         lv_draw_image_dsc_t img_dsc;
