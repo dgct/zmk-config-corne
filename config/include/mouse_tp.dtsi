@@ -98,7 +98,7 @@
 
       // The maximum mouse movement speed the TP will accelarate to
       // (Default: 97)
-      // tp-val6-upper-speed = <97>;
+      tp-val6-upper-speed = <146>;
 
 
       // Negative Inertia (Default: 6)
@@ -108,7 +108,7 @@
 
       // Enable clicking by tapping on the TP.
       tp-press-to-select;
-      // tp-press-to-select-threshold = <10>;
+      tp-press-to-select-threshold = <4>;
 
 
       // Adjust axis settings on the TP
