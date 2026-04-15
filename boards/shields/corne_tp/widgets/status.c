@@ -42,28 +42,22 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 static uint8_t bongo_frame = 0;
 
 static void blit_bongo(lv_obj_t *canvas, const uint8_t *frame, lv_coord_t x, lv_coord_t y) {
-    lv_draw_rect_dsc_t fg;
-    init_rect_dsc(&fg, LVGL_FOREGROUND);
-    lv_layer_t layer;
-    lv_canvas_init_layer(canvas, &layer);
+    uint8_t *buf = lv_canvas_get_draw_buf(canvas)->data;
+    const uint32_t stride = lv_draw_buf_width_to_stride(CANVAS_SIZE, CANVAS_COLOR_FORMAT);
+    const uint8_t fg = IS_ENABLED(CONFIG_NICE_VIEW_WIDGET_INVERTED) ? 0xFF : 0x00;
+
     for (int r = 0; r < BONGO_H; r++) {
-        int run_start = -1;
+        int py = y + r;
+        if (py >= CANVAS_SIZE) break;
         for (int c = 0; c < BONGO_W; c++) {
-            bool set = frame[r * BONGO_STRIDE + c / 8] & (0x80 >> (c % 8));
-            if (set && run_start < 0) {
-                run_start = c;
-            } else if (!set && run_start >= 0) {
-                lv_area_t coords = {x + run_start, y + r, x + c - 1, y + r};
-                lv_draw_rect(&layer, &fg, &coords);
-                run_start = -1;
+            if (frame[r * BONGO_STRIDE + c / 8] & (0x80 >> (c % 8))) {
+                int px = x + c;
+                if (px < CANVAS_SIZE) {
+                    buf[py * stride + px] = fg;
+                }
             }
         }
-        if (run_start >= 0) {
-            lv_area_t coords = {x + run_start, y + r, x + BONGO_W - 1, y + r};
-            lv_draw_rect(&layer, &fg, &coords);
-        }
     }
-    lv_canvas_finish_layer(canvas, &layer);
 }
 
 struct output_status_state {
