@@ -35,7 +35,7 @@
         status = "okay";
 
         device = <&mouse_ps2_split>;
-        input-processors = <&tp_xy_transform INPUT_TRANSFORM_X_INVERT &zip_xy_scaler 2 1>;
+        input-processors = <&tp_xy_transform INPUT_TRANSFORM_X_INVERT &zip_xy_scaler 3 1>;
 
         /* Scroll mode: trackpoint becomes scroll wheel on FUN layer */
         scroll_mode {
