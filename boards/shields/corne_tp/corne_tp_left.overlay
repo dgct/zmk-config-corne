@@ -7,6 +7,7 @@
 #include "corne_tp.dtsi"
 #include <dt-bindings/zmk/input_transform.h>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <input/processors.dtsi>
 
 / {
     input_processors {
@@ -35,6 +36,12 @@
 
         device = <&mouse_ps2_split>;
         input-processors = <&tp_xy_transform INPUT_TRANSFORM_X_INVERT>;
+
+        /* Scroll mode: trackpoint becomes scroll wheel on FUN layer */
+        scroll_mode {
+            layers = <5>;
+            input-processors = <&zip_xy_to_scroll_mapper>;
+        };
     };
 };
 
