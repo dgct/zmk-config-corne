@@ -2,15 +2,22 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
+    - name: dgct
+      url-base: https://github.com/dgct
     - name: badjeff
       url-base: https://github.com/badjeff
+    - name: zettaface
+      url-base: https://github.com/zettaface
   projects:
     - name: zmk
-      remote: zmkfirmware
+      remote: dgct
       import: app/west.yml
-      revision: ac7f75b8
+      revision: d82bea0f
     - name: kb_zmk_ps2_mouse_trackpoint_driver
       remote: badjeff
       revision: 2df4d6d
+    - name: zmk-input-processor-keybind
+      remote: zettaface
+      revision: main
   self:
     path: config
