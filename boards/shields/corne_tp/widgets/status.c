@@ -362,7 +362,8 @@ static void bongo_tick_handler(struct k_work *work) {
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         draw_top(widget->obj, &widget->state);
     }
-    k_work_reschedule(&bongo_tick_work, K_MSEC(bongo_interval_ms(zmk_wpm_get_state())));
+    k_work_reschedule_for_queue(zmk_display_work_q(), &bongo_tick_work,
+                                K_MSEC(bongo_interval_ms(zmk_wpm_get_state())));
 }
 
 // --- WPM status (drives bongo cat animation) ---
@@ -409,7 +410,8 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget_layer_status_init();
     widget_wpm_status_init();
 
-    k_work_schedule(&bongo_tick_work, K_MSEC(BONGO_ANIM_MS_MAX));
+    k_work_schedule_for_queue(zmk_display_work_q(), &bongo_tick_work,
+                              K_MSEC(BONGO_ANIM_MS_MAX));
 
     return 0;
 }
