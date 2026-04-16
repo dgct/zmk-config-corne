@@ -27,6 +27,12 @@
         ;
 };
 
+// Hold VCC low for 100ms on soft reset so the HolyKeebs SK8707 hardware
+// POR circuit fully discharges and the trackpoint re-initializes cleanly.
+&ext_power {
+    init-off-delay-ms = <100>;
+};
+
 
 /*
  * PS/2 Mouse / Trackpoint - User Configuration
