@@ -29,7 +29,7 @@
                        <&kp RIGHT>,
                        <&kp UP>,
                        <&kp DOWN>;
-            tick = <27>;
+            tick = <20>;
             tap-ms = <10>;
         };
     };
