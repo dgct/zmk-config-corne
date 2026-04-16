@@ -25,11 +25,11 @@
             compatible = "zmk,input-processor-keybind";
             #input-processor-cells = <0>;
             track_remainders;
-            bindings = <&kp RIGHT>,
-                       <&kp LEFT>,
-                       <&kp DOWN>,
-                       <&kp UP>;
-            tick = <40>;
+            bindings = <&kp LEFT>,
+                       <&kp RIGHT>,
+                       <&kp UP>,
+                       <&kp DOWN>;
+            tick = <27>;
             tap-ms = <10>;
         };
     };
