@@ -38,8 +38,13 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 // --- Bongo cat animation state ---
 #define BONGO_IDLE_SPEED 20
 #define BONGO_TAP_SPEED 40
+#define BONGO_ANIM_MS_MAX 800
+#define BONGO_ANIM_MS_MIN 100
+#define BONGO_ANIM_WPM_CAP 120
 
 static uint8_t bongo_frame = 0;
+static void bongo_tick_handler(struct k_work *work);
+static K_WORK_DELAYABLE_DEFINE(bongo_tick_work, bongo_tick_handler);
 
 struct output_status_state {
     struct zmk_endpoint_instance selected_endpoint;
@@ -341,11 +346,29 @@ ZMK_DISPLAY_WIDGET_LISTENER(widget_layer_status, struct layer_status_state, laye
 
 ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
 
+// --- Bongo cat animation timer ---
+
+static uint32_t bongo_interval_ms(uint8_t wpm) {
+    if (wpm > BONGO_ANIM_WPM_CAP) {
+        wpm = BONGO_ANIM_WPM_CAP;
+    }
+    return BONGO_ANIM_MS_MAX -
+           (uint32_t)wpm * (BONGO_ANIM_MS_MAX - BONGO_ANIM_MS_MIN) / BONGO_ANIM_WPM_CAP;
+}
+
+static void bongo_tick_handler(struct k_work *work) {
+    bongo_frame++;
+    struct zmk_widget_status *widget;
+    SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
+        draw_top(widget->obj, &widget->state);
+    }
+    k_work_reschedule(&bongo_tick_work, K_MSEC(bongo_interval_ms(zmk_wpm_get_state())));
+}
+
 // --- WPM status (drives bongo cat animation) ---
 
 static void set_wpm_status(struct zmk_widget_status *widget, struct wpm_status_state state) {
     widget->state.wpm = state.wpm;
-    bongo_frame++;
     draw_top(widget->obj, &widget->state);
 }
 
@@ -385,6 +408,8 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget_output_status_init();
     widget_layer_status_init();
     widget_wpm_status_init();
+
+    k_work_schedule(&bongo_tick_work, K_MSEC(BONGO_ANIM_MS_MAX));
 
     return 0;
 }
