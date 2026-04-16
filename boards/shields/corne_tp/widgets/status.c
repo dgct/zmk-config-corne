@@ -370,7 +370,6 @@ static void bongo_tick_handler(struct k_work *work) {
 
 static void set_wpm_status(struct zmk_widget_status *widget, struct wpm_status_state state) {
     widget->state.wpm = state.wpm;
-    draw_top(widget->obj, &widget->state);
 }
 
 static void wpm_status_update_cb(struct wpm_status_state state) {
