@@ -551,6 +551,11 @@
 #ifdef MOUSE_PS2_PIN_RST_PRO_MICRO
         rst-gpios = MOUSE_PS2_PIN_RST_PRO_MICRO;
 #endif
+
+        /* Same physical pin as the UART RX (SDA).  Reclaimed as a
+         * GPIO falling-edge interrupt while the UART is suspended, so
+         * trackpoint motion itself can wake the driver from idle PM. */
+        wake-gpios = MOUSE_PS2_PIN_SDA_PRO_MICRO;
     };
 
     split_inputs {
