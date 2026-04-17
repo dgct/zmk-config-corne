@@ -352,6 +352,10 @@ ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
 // inside `lv_task_handler()` — the exact same thread as every
 // ZMK_DISPLAY_WIDGET_LISTENER callback. This makes concurrent canvas
 // writes impossible by construction.
+//
+// Runs continuously: at WPM 0 the interval is BONGO_ANIM_MS_MAX (800ms),
+// which plays the idle frames as a slow tail wag. As WPM climbs the
+// period shrinks toward BONGO_ANIM_MS_MIN for a snappy tap animation.
 
 static uint32_t bongo_interval_ms(uint8_t wpm) {
     if (wpm > BONGO_ANIM_WPM_CAP) {
@@ -363,13 +367,6 @@ static uint32_t bongo_interval_ms(uint8_t wpm) {
 
 static void bongo_tick_cb(lv_timer_t *timer) {
     uint8_t wpm = zmk_wpm_get_state();
-
-    // Idle guard: when nobody is typing, stop rescheduling. WPM state
-    // changes restart the timer (see wpm_status_update_cb below).
-    if (wpm == 0) {
-        lv_timer_pause(timer);
-        return;
-    }
 
     bongo_frame++;
     struct zmk_widget_status *widget;
@@ -389,11 +386,10 @@ static void wpm_status_update_cb(struct wpm_status_state state) {
     struct zmk_widget_status *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_wpm_status(widget, state); }
 
-    // Wake the bongo timer when typing starts. The timer pauses itself
-    // when WPM drops to 0 (see bongo_tick_cb).
-    if (bongo_timer != NULL && state.wpm > 0) {
+    // Retune the tick period so frame rate tracks typing speed without
+    // waiting for the next tick to pick up the new WPM.
+    if (bongo_timer != NULL) {
         lv_timer_set_period(bongo_timer, bongo_interval_ms(state.wpm));
-        lv_timer_resume(bongo_timer);
     }
 }
 
@@ -430,10 +426,9 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget_wpm_status_init();
 
     // Create the bongo animation timer on the LVGL task scheduler.
-    // Starts paused; WPM events will resume it when typing begins.
+    // Always runs: idle frames animate at BONGO_ANIM_MS_MAX when WPM=0.
     if (bongo_timer == NULL) {
         bongo_timer = lv_timer_create(bongo_tick_cb, BONGO_ANIM_MS_MAX, NULL);
-        lv_timer_pause(bongo_timer);
     }
 
     return 0;
