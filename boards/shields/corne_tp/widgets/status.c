@@ -43,8 +43,8 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 #define BONGO_ANIM_WPM_CAP 120
 
 static uint8_t bongo_frame = 0;
-static void bongo_tick_handler(struct k_work *work);
-static K_WORK_DELAYABLE_DEFINE(bongo_tick_work, bongo_tick_handler);
+static lv_timer_t *bongo_timer = NULL;
+static void bongo_tick_cb(lv_timer_t *timer);
 
 struct output_status_state {
     struct zmk_endpoint_instance selected_endpoint;
@@ -347,6 +347,11 @@ ZMK_DISPLAY_WIDGET_LISTENER(widget_layer_status, struct layer_status_state, laye
 ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
 
 // --- Bongo cat animation timer ---
+//
+// Uses an LVGL timer (not a Zephyr work item) so frame advancement runs
+// inside `lv_task_handler()` — the exact same thread as every
+// ZMK_DISPLAY_WIDGET_LISTENER callback. This makes concurrent canvas
+// writes impossible by construction.
 
 static uint32_t bongo_interval_ms(uint8_t wpm) {
     if (wpm > BONGO_ANIM_WPM_CAP) {
@@ -356,14 +361,22 @@ static uint32_t bongo_interval_ms(uint8_t wpm) {
            (uint32_t)wpm * (BONGO_ANIM_MS_MAX - BONGO_ANIM_MS_MIN) / BONGO_ANIM_WPM_CAP;
 }
 
-static void bongo_tick_handler(struct k_work *work) {
+static void bongo_tick_cb(lv_timer_t *timer) {
+    uint8_t wpm = zmk_wpm_get_state();
+
+    // Idle guard: when nobody is typing, stop rescheduling. WPM state
+    // changes restart the timer (see wpm_status_update_cb below).
+    if (wpm == 0) {
+        lv_timer_pause(timer);
+        return;
+    }
+
     bongo_frame++;
     struct zmk_widget_status *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         draw_top(widget->obj, &widget->state);
     }
-    k_work_reschedule_for_queue(zmk_display_work_q(), &bongo_tick_work,
-                                K_MSEC(bongo_interval_ms(zmk_wpm_get_state())));
+    lv_timer_set_period(timer, bongo_interval_ms(wpm));
 }
 
 // --- WPM status (drives bongo cat animation) ---
@@ -375,6 +388,13 @@ static void set_wpm_status(struct zmk_widget_status *widget, struct wpm_status_s
 static void wpm_status_update_cb(struct wpm_status_state state) {
     struct zmk_widget_status *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_wpm_status(widget, state); }
+
+    // Wake the bongo timer when typing starts. The timer pauses itself
+    // when WPM drops to 0 (see bongo_tick_cb).
+    if (bongo_timer != NULL && state.wpm > 0) {
+        lv_timer_set_period(bongo_timer, bongo_interval_ms(state.wpm));
+        lv_timer_resume(bongo_timer);
+    }
 }
 
 static struct wpm_status_state wpm_status_get_state(const zmk_event_t *eh) {
@@ -409,8 +429,12 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget_layer_status_init();
     widget_wpm_status_init();
 
-    k_work_schedule_for_queue(zmk_display_work_q(), &bongo_tick_work,
-                              K_MSEC(BONGO_ANIM_MS_MAX));
+    // Create the bongo animation timer on the LVGL task scheduler.
+    // Starts paused; WPM events will resume it when typing begins.
+    if (bongo_timer == NULL) {
+        bongo_timer = lv_timer_create(bongo_tick_cb, BONGO_ANIM_MS_MAX, NULL);
+        lv_timer_pause(bongo_timer);
+    }
 
     return 0;
 }
