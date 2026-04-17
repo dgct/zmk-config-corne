@@ -15,7 +15,7 @@ manifest:
       revision: 3309dcbb
     - name: kb_zmk_ps2_mouse_trackpoint_driver
       remote: dgct
-      revision: ddfd3c65
+      revision: 618ae70e
     - name: zmk-input-processor-keybind
       remote: zettaface
       revision: main
