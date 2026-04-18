@@ -15,7 +15,6 @@
 include:
   - board: nice_nano
     shield: corne_tp_left nice_view_adapter nice_view
-    snippet: studio-rpc-usb-uart
   - board: nice_nano
     shield: corne_tp_right
   - board: nice_nano
