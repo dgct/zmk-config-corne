@@ -27,6 +27,7 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 #include <zmk/endpoints.h>
 #include <zmk/keymap.h>
 #include <zmk/wpm.h>
+#include <zmk/events/activity_state_changed.h>
 #include "bongo_cat_images.h"
 
 #if IS_ENABLED(CONFIG_ZMK_SPLIT_BLE_CENTRAL_BATTERY_LEVEL_FETCHING)
@@ -36,13 +37,32 @@ LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 
 // --- Bongo cat animation state ---
+//
+// Three-state machine driven by WPM:
+//   IDLE (wpm <= 20)         : 5-frame slow tail wag, 800ms period
+//   PREP (20 < wpm < 40)     : 1 static frame, 400ms period (no redraw needed)
+//   TAP  (wpm >= 40)         : 2-frame paw tap, 100-500ms period (WPM-scaled)
+//
+// All bongo state lives here. draw_top renders whatever current_bongo_img
+// points at; bongo_tick_cb is the sole writer of current_bongo_img and
+// only triggers a redraw when the frame pointer actually changes.
 #define BONGO_IDLE_SPEED 20
 #define BONGO_TAP_SPEED 40
-#define BONGO_ANIM_MS_MAX 800
-#define BONGO_ANIM_MS_MIN 100
+#define BONGO_ANIM_MS_IDLE 800
+#define BONGO_ANIM_MS_PREP 400
+#define BONGO_ANIM_MS_TAP_MAX 500
+#define BONGO_ANIM_MS_TAP_MIN 100
 #define BONGO_ANIM_WPM_CAP 120
 
+enum bongo_state {
+    BONGO_STATE_IDLE,
+    BONGO_STATE_PREP,
+    BONGO_STATE_TAP,
+};
+
+static enum bongo_state current_bongo_state = BONGO_STATE_IDLE;
 static uint8_t bongo_frame = 0;
+static const lv_image_dsc_t *current_bongo_img = NULL;
 static lv_timer_t *bongo_timer = NULL;
 static void bongo_tick_cb(lv_timer_t *timer);
 
@@ -104,20 +124,14 @@ static void draw_top(lv_obj_t *widget, const struct status_state *state) {
 
     canvas_draw_text(canvas, 0, 0, CANVAS_SIZE, &label_dsc, output_text);
 
-    // Draw bongo cat below battery + output area
-    const lv_image_dsc_t *frame;
-    uint8_t wpm = state->wpm;
-
-    if (wpm >= BONGO_TAP_SPEED) {
-        frame = bongo_tap[bongo_frame % BONGO_TAP_COUNT];
-    } else if (wpm > BONGO_IDLE_SPEED) {
-        frame = bongo_prep[bongo_frame % BONGO_PREP_COUNT];
-    } else {
-        frame = bongo_idle[bongo_frame % BONGO_IDLE_COUNT];
+    // Draw current bongo frame (set by bongo_tick_cb).
+    // current_bongo_img is initialized in zmk_widget_status_init before
+    // any draw_top can run, so this is always non-NULL.
+    if (current_bongo_img != NULL) {
+        lv_draw_image_dsc_t img_dsc;
+        lv_draw_image_dsc_init(&img_dsc);
+        canvas_draw_img(canvas, 7, 36, current_bongo_img, &img_dsc);
     }
-    lv_draw_image_dsc_t img_dsc;
-    lv_draw_image_dsc_init(&img_dsc);
-    canvas_draw_img(canvas, 7, 36, frame, &img_dsc);
 
     // Rotate canvas
     rotate_canvas(canvas);
@@ -353,30 +367,91 @@ ZMK_SUBSCRIPTION(widget_layer_status, zmk_layer_state_changed);
 // ZMK_DISPLAY_WIDGET_LISTENER callback. This makes concurrent canvas
 // writes impossible by construction.
 //
-// Runs continuously: at WPM 0 the interval is BONGO_ANIM_MS_MAX (800ms),
-// which plays the idle frames as a slow tail wag. As WPM climbs the
-// period shrinks toward BONGO_ANIM_MS_MIN for a snappy tap animation.
+// Lifecycle:
+//   - Created in zmk_widget_status_init, runs continuously while the
+//     display is active.
+//   - When CONFIG_ZMK_DISPLAY_BLANK_ON_IDLE=y, ZMK stops calling
+//     lv_task_handler() on idle, freezing this timer automatically.
+//   - We additionally pause/resume on activity state changes so the
+//     timer is always quiescent when not visible.
 
-static uint32_t bongo_interval_ms(uint8_t wpm) {
-    if (wpm > BONGO_ANIM_WPM_CAP) {
-        wpm = BONGO_ANIM_WPM_CAP;
+static enum bongo_state bongo_state_for_wpm(uint8_t wpm) {
+    if (wpm >= BONGO_TAP_SPEED) {
+        return BONGO_STATE_TAP;
     }
-    return BONGO_ANIM_MS_MAX -
-           (uint32_t)wpm * (BONGO_ANIM_MS_MAX - BONGO_ANIM_MS_MIN) / BONGO_ANIM_WPM_CAP;
+    if (wpm > BONGO_IDLE_SPEED) {
+        return BONGO_STATE_PREP;
+    }
+    return BONGO_STATE_IDLE;
+}
+
+static uint32_t bongo_period_ms(enum bongo_state s, uint8_t wpm) {
+    switch (s) {
+    case BONGO_STATE_IDLE:
+        return BONGO_ANIM_MS_IDLE;
+    case BONGO_STATE_PREP:
+        return BONGO_ANIM_MS_PREP;
+    case BONGO_STATE_TAP: {
+        // Linear interpolation across [TAP_SPEED, WPM_CAP] -> [TAP_MAX, TAP_MIN].
+        if (wpm > BONGO_ANIM_WPM_CAP) {
+            wpm = BONGO_ANIM_WPM_CAP;
+        }
+        uint32_t span = BONGO_ANIM_WPM_CAP - BONGO_TAP_SPEED;
+        uint32_t pos = wpm - BONGO_TAP_SPEED;
+        return BONGO_ANIM_MS_TAP_MAX -
+               pos * (BONGO_ANIM_MS_TAP_MAX - BONGO_ANIM_MS_TAP_MIN) / span;
+    }
+    }
+    return BONGO_ANIM_MS_IDLE;
+}
+
+static const lv_image_dsc_t *bongo_frame_for(enum bongo_state s, uint8_t frame) {
+    switch (s) {
+    case BONGO_STATE_IDLE:
+        return bongo_idle[frame % BONGO_IDLE_COUNT];
+    case BONGO_STATE_PREP:
+        return bongo_prep[frame % BONGO_PREP_COUNT];
+    case BONGO_STATE_TAP:
+        return bongo_tap[frame % BONGO_TAP_COUNT];
+    }
+    return bongo_idle[0];
 }
 
 static void bongo_tick_cb(lv_timer_t *timer) {
     uint8_t wpm = zmk_wpm_get_state();
+    enum bongo_state next_state = bongo_state_for_wpm(wpm);
 
+    // On state transition: reset frame counter and timer period.
+    if (next_state != current_bongo_state) {
+        current_bongo_state = next_state;
+        bongo_frame = 0;
+        lv_timer_set_period(timer, bongo_period_ms(next_state, wpm));
+    } else if (next_state == BONGO_STATE_TAP) {
+        // Within TAP, retune period as WPM drifts.
+        lv_timer_set_period(timer, bongo_period_ms(next_state, wpm));
+    }
+
+    const lv_image_dsc_t *next_img = bongo_frame_for(current_bongo_state, bongo_frame);
     bongo_frame++;
+
+    // Frame-change gating: skip redraw if the image pointer is unchanged.
+    // PREP has only one frame, so this skips every PREP tick after the first.
+    if (next_img == current_bongo_img) {
+        return;
+    }
+    current_bongo_img = next_img;
+
     struct zmk_widget_status *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) {
         draw_top(widget->obj, &widget->state);
     }
-    lv_timer_set_period(timer, bongo_interval_ms(wpm));
 }
 
-// --- WPM status (drives bongo cat animation) ---
+// --- WPM status ---
+//
+// We only store WPM in the widget state for completeness. The bongo timer
+// reads zmk_wpm_get_state() directly each tick, so there is no need to
+// trigger any redraw from this listener.
 
 static void set_wpm_status(struct zmk_widget_status *widget, struct wpm_status_state state) {
     widget->state.wpm = state.wpm;
@@ -385,12 +460,6 @@ static void set_wpm_status(struct zmk_widget_status *widget, struct wpm_status_s
 static void wpm_status_update_cb(struct wpm_status_state state) {
     struct zmk_widget_status *widget;
     SYS_SLIST_FOR_EACH_CONTAINER(&widgets, widget, node) { set_wpm_status(widget, state); }
-
-    // Retune the tick period so frame rate tracks typing speed without
-    // waiting for the next tick to pick up the new WPM.
-    if (bongo_timer != NULL) {
-        lv_timer_set_period(bongo_timer, bongo_interval_ms(state.wpm));
-    }
 }
 
 static struct wpm_status_state wpm_status_get_state(const zmk_event_t *eh) {
@@ -400,6 +469,40 @@ static struct wpm_status_state wpm_status_get_state(const zmk_event_t *eh) {
 ZMK_DISPLAY_WIDGET_LISTENER(widget_wpm_status, struct wpm_status_state, wpm_status_update_cb,
                             wpm_status_get_state)
 ZMK_SUBSCRIPTION(widget_wpm_status, zmk_wpm_state_changed);
+
+// --- Activity state -> bongo timer pause/resume ---
+//
+// When the keyboard goes idle, pause the bongo timer so it doesn't fire
+// even once on display resume. On wake, reset the timer (so it doesn't
+// fire immediately as overdue) and resume it.
+//
+// Runs on the system event manager thread. lv_timer_pause/resume only
+// flip a flag and do not touch the canvas, so this is safe to call
+// outside the display work queue context.
+
+static int bongo_activity_listener(const zmk_event_t *eh) {
+    const struct zmk_activity_state_changed *ev = as_zmk_activity_state_changed(eh);
+    if (ev == NULL || bongo_timer == NULL) {
+        return ZMK_EV_EVENT_BUBBLE;
+    }
+
+    switch (ev->state) {
+    case ZMK_ACTIVITY_ACTIVE:
+        lv_timer_reset(bongo_timer);
+        lv_timer_resume(bongo_timer);
+        break;
+    case ZMK_ACTIVITY_IDLE:
+    case ZMK_ACTIVITY_SLEEP:
+        lv_timer_pause(bongo_timer);
+        break;
+    default:
+        break;
+    }
+    return ZMK_EV_EVENT_BUBBLE;
+}
+
+ZMK_LISTENER(bongo_activity, bongo_activity_listener);
+ZMK_SUBSCRIPTION(bongo_activity, zmk_activity_state_changed);
 
 // --- Init ---
 
@@ -425,10 +528,17 @@ int zmk_widget_status_init(struct zmk_widget_status *widget, lv_obj_t *parent) {
     widget_layer_status_init();
     widget_wpm_status_init();
 
+    // Initialize bongo state machine before any draw_top can run.
+    // bongo_tick_cb will replace this on its first invocation.
+    if (current_bongo_img == NULL) {
+        current_bongo_img = bongo_idle[0];
+    }
+
     // Create the bongo animation timer on the LVGL task scheduler.
-    // Always runs: idle frames animate at BONGO_ANIM_MS_MAX when WPM=0.
+    // The timer fires inside lv_task_handler(), so it runs on the same
+    // thread as every ZMK_DISPLAY_WIDGET_LISTENER callback.
     if (bongo_timer == NULL) {
-        bongo_timer = lv_timer_create(bongo_tick_cb, BONGO_ANIM_MS_MAX, NULL);
+        bongo_timer = lv_timer_create(bongo_tick_cb, BONGO_ANIM_MS_IDLE, NULL);
     }
 
     return 0;
