@@ -20,7 +20,9 @@
 #include <zephyr/task_wdt/task_wdt.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_REGISTER(wdt_feeder, CONFIG_ZMK_LOG_LEVEL);
+/* Hardcode INF so logs always show regardless of CONFIG_ZMK_LOG_LEVEL
+ * visibility from this compilation unit. */
+LOG_MODULE_REGISTER(wdt_feeder, LOG_LEVEL_INF);
 
 #define WDT_FEED_INTERVAL_MS  1000
 #define WDT_TASK_TIMEOUT_MS   5000
