@@ -1,3 +1,7 @@
+if(CONFIG_TASK_WDT)
+  zephyr_library_sources(wdt_feeder.c)
+endif()
+
 if(CONFIG_ZMK_DISPLAY AND CONFIG_CORNE_TP_CUSTOM_WIDGET)
   zephyr_library_include_directories(${CMAKE_SOURCE_DIR}/include)
   zephyr_library_sources(custom_status_screen.c)
