@@ -15,6 +15,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/drivers/watchdog.h>
 #include <zephyr/drivers/hwinfo.h>
 #include <zephyr/task_wdt/task_wdt.h>
@@ -80,8 +81,15 @@ static int wdt_feeder_init(void) {
         return wdt_channel;
     }
 
-    LOG_INF("Watchdog armed: task=%dms, feed=%dms, channel=%d",
+#if DT_HAS_CHOSEN(zephyr_task_wdt)
+    LOG_INF("Watchdog armed: task=%dms, feed=%dms, channel=%d, HW fallback=YES (%s)",
+            WDT_TASK_TIMEOUT_MS, WDT_FEED_INTERVAL_MS, wdt_channel,
+            DT_NODE_FULL_NAME(DT_CHOSEN(zephyr_task_wdt)));
+#else
+    LOG_ERR("Watchdog armed: task=%dms, feed=%dms, channel=%d, HW fallback=NO "
+            "(zephyr,task-wdt chosen missing - software-only mode!)",
             WDT_TASK_TIMEOUT_MS, WDT_FEED_INTERVAL_MS, wdt_channel);
+#endif
 
     k_work_schedule(&wdt_feed_work, K_MSEC(WDT_FEED_INTERVAL_MS));
     return 0;

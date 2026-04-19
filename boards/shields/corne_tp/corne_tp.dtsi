@@ -13,6 +13,13 @@
         zephyr,display = &oled;
         zmk,kscan = &kscan0;
         zmk,physical-layout = &foostan_corne_6col_layout;
+        /*
+         * Bug 6: bind task_wdt to the nRF52 hardware watchdog so the HW
+         * fallback actually fires when the system workqueue stalls.
+         * Without this, task_wdt runs in software-only mode (driven by
+         * syswq) and dies with the very thing we're trying to detect.
+         */
+        zephyr,task-wdt = &wdt0;
     };
 
     default_transform: keymap_transform_0 {
@@ -90,4 +97,9 @@ RC(2,1) RC(2,2) RC(2,3) RC(2,4) RC(2,5)  RC(2,6) RC(2,7) RC(2,8) RC(2,9) RC(2,10
         inversion-on;
         prechargep = <0x22>;
     };
+};
+
+/* Bug 6: enable the hardware watchdog used by task_wdt_hw_fallback. */
+&wdt0 {
+    status = "okay";
 };
