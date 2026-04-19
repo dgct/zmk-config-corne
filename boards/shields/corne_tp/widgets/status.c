@@ -476,17 +476,21 @@ ZMK_SUBSCRIPTION(widget_wpm_status, zmk_wpm_state_changed);
 // even once on display resume. On wake, reset the timer (so it doesn't
 // fire immediately as overdue) and resume it.
 //
-// Runs on the system event manager thread. lv_timer_pause/resume only
-// flip a flag and do not touch the canvas, so this is safe to call
-// outside the display work queue context.
+// LVGL is NOT thread-safe. lv_timer_reset/pause/resume mutate nodes in
+// the same global linked list that lv_timer_handler() walks on the
+// dedicated display thread. Calling them directly from the system event
+// manager thread races against lv_timer_handler iteration and can
+// corrupt the list, wedging the display thread. Marshal the operation
+// onto the display work queue so it serializes with lv_timer_handler.
 
-static int bongo_activity_listener(const zmk_event_t *eh) {
-    const struct zmk_activity_state_changed *ev = as_zmk_activity_state_changed(eh);
-    if (ev == NULL || bongo_timer == NULL) {
-        return ZMK_EV_EVENT_BUBBLE;
+static atomic_t pending_bongo_activity = ATOMIC_INIT(-1);
+
+static void bongo_activity_work_cb(struct k_work *work) {
+    int state = (int)atomic_set(&pending_bongo_activity, -1);
+    if (state < 0 || bongo_timer == NULL) {
+        return;
     }
-
-    switch (ev->state) {
+    switch ((enum zmk_activity_state)state) {
     case ZMK_ACTIVITY_ACTIVE:
         lv_timer_reset(bongo_timer);
         lv_timer_resume(bongo_timer);
@@ -498,6 +502,17 @@ static int bongo_activity_listener(const zmk_event_t *eh) {
     default:
         break;
     }
+}
+
+static K_WORK_DEFINE(bongo_activity_work, bongo_activity_work_cb);
+
+static int bongo_activity_listener(const zmk_event_t *eh) {
+    const struct zmk_activity_state_changed *ev = as_zmk_activity_state_changed(eh);
+    if (ev == NULL || bongo_timer == NULL) {
+        return ZMK_EV_EVENT_BUBBLE;
+    }
+    atomic_set(&pending_bongo_activity, (atomic_val_t)ev->state);
+    k_work_submit_to_queue(zmk_display_work_q(), &bongo_activity_work);
     return ZMK_EV_EVENT_BUBBLE;
 }
 
