@@ -25,8 +25,13 @@
  * visibility from this compilation unit. */
 LOG_MODULE_REGISTER(wdt_feeder, LOG_LEVEL_INF);
 
-#define WDT_FEED_INTERVAL_MS  1000
-#define WDT_TASK_TIMEOUT_MS   5000
+/* Feed twice per second; declare a freeze if the syswq misses ~16 feed
+ * windows.  Bumped from 1000/5000 to 500/8000 (P1 Apr 2026) — the old
+ * 4 s grace window was tight enough that a settings-save + LFS commit
+ * coinciding with a HoG retry burst could false-positive.
+ */
+#define WDT_FEED_INTERVAL_MS  500
+#define WDT_TASK_TIMEOUT_MS   8000
 
 static int wdt_channel = -1;
 
