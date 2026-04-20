@@ -12,7 +12,7 @@ manifest:
     - name: zmk
       remote: dgct
       import: app/west.yml
-      revision: a656771b
+      revision: 42a1bc6e
     - name: kb_zmk_ps2_mouse_trackpoint_driver
       remote: dgct
       revision: 96e9cca7
