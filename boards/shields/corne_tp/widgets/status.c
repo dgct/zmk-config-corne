@@ -9,6 +9,8 @@
 
 #include <zephyr/kernel.h>
 
+#include <string.h>
+
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(zmk, CONFIG_ZMK_LOG_LEVEL);
 
@@ -216,7 +218,24 @@ static void draw_bottom(lv_obj_t *widget, const struct status_state *state) {
 static void set_battery_status(struct zmk_widget_status *widget,
                                struct battery_status_state state) {
 #if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
-    widget->state.charging = state.usb_present;
+    bool new_charging = state.usb_present;
+#else
+    bool new_charging = widget->state.charging;
+#endif
+    /* Skip the redraw entirely if neither battery level nor charging
+     * state actually changed. draw_top() rebuilds the entire top canvas
+     * (clear + battery + endpoint + bongo frame + rotate + SPI flush);
+     * doing it on every BAS event -- including the no-op ones we now
+     * fire on every peripheral reconnect -- caused visible flicker.
+     * The bongo timer is the only redraw path we genuinely want firing
+     * unconditionally, and it skips its own redraw when the frame image
+     * pointer is unchanged. */
+    if (widget->state.battery == state.level &&
+        widget->state.charging == new_charging) {
+        return;
+    }
+#if IS_ENABLED(CONFIG_USB_DEVICE_STACK)
+    widget->state.charging = new_charging;
 #endif /* IS_ENABLED(CONFIG_USB_DEVICE_STACK) */
 
     widget->state.battery = state.level;
@@ -254,6 +273,11 @@ ZMK_SUBSCRIPTION(widget_battery_status, zmk_usb_conn_state_changed);
 
 static void set_peripheral_battery_status(struct zmk_widget_status *widget,
                                           struct peripheral_battery_status_state state) {
+    /* Same change-gate as set_battery_status: avoid full top-canvas
+     * redraw when the displayed value would be identical. */
+    if (widget->state.peripheral_battery == state.level) {
+        return;
+    }
     widget->state.peripheral_battery = state.level;
     draw_top(widget->obj, &widget->state);
 }
@@ -292,6 +316,22 @@ ZMK_SUBSCRIPTION(widget_peripheral_battery_status, zmk_peripheral_battery_state_
 
 static void set_output_status(struct zmk_widget_status *widget,
                               const struct output_status_state *state) {
+    /* Skip the double full-canvas redraw (top + middle) when nothing the
+     * user can see has actually changed. zmk_endpoint_changed and
+     * zmk_usb_conn_state_changed fire on every KVM-induced USB enumerate/
+     * de-enumerate cycle even when the visible state is identical, which
+     * compounded the flicker. */
+    if (zmk_endpoint_instance_eq(widget->state.selected_endpoint, state->selected_endpoint) &&
+        widget->state.active_profile_index == state->active_profile_index &&
+        widget->state.active_profile_connected == state->active_profile_connected &&
+        widget->state.active_profile_bonded == state->active_profile_bonded &&
+        memcmp(widget->state.profiles_connected, state->profiles_connected,
+               sizeof(widget->state.profiles_connected)) == 0 &&
+        memcmp(widget->state.profiles_bonded, state->profiles_bonded,
+               sizeof(widget->state.profiles_bonded)) == 0) {
+        return;
+    }
+
     widget->state.selected_endpoint = state->selected_endpoint;
     widget->state.active_profile_index = state->active_profile_index;
     widget->state.active_profile_connected = state->active_profile_connected;
