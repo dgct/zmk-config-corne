@@ -1,2 +1,14 @@
 logs/
 *.log
+
+# Local build env (Item 3: Nix flake + Justfile)
+.direnv/
+.envrc.local
+build/
+firmware/
+# west workspace dirs created by `just init` (sibling to /config)
+/zmk/
+/modules/
+/tools/
+/zephyr/
+/.west/
