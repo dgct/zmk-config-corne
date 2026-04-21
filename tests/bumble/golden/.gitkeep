@@ -1,0 +1,2 @@
+# Golden traces written by `pytest --update-golden`.
+# Files: <scenario>.jsonl — one JSON object per line: {ts_ms, handle, data}
