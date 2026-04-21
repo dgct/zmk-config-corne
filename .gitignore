@@ -12,3 +12,9 @@ firmware/
 /tools/
 /zephyr/
 /.west/
+
+# Python (Bumble test harness)
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
