@@ -53,7 +53,7 @@ static sys_slist_t widgets = SYS_SLIST_STATIC_INIT(&widgets);
 #define BONGO_ANIM_MS_IDLE 800
 #define BONGO_ANIM_MS_PREP 400
 #define BONGO_ANIM_MS_TAP_MAX 500
-#define BONGO_ANIM_MS_TAP_MIN 100
+#define BONGO_ANIM_MS_TAP_MIN 200
 #define BONGO_ANIM_WPM_CAP 120
 
 enum bongo_state {
