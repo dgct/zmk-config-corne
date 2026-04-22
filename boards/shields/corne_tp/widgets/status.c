@@ -448,10 +448,7 @@ static uint32_t bongo_period_ms(enum bongo_state s, uint8_t wpm) {
 static const lv_image_dsc_t *bongo_frame_for(enum bongo_state s, uint8_t frame) {
     switch (s) {
     case BONGO_STATE_IDLE:
-        // Hold a single static frame so the idle tick's frame-change dedup
-        // fires exactly once (on IDLE entry) and never again. No SPI writes
-        // until the user starts typing.
-        return bongo_idle[0];
+        return bongo_idle[frame % BONGO_IDLE_COUNT];
     case BONGO_STATE_PREP:
         return bongo_prep[frame % BONGO_PREP_COUNT];
     case BONGO_STATE_TAP:
