@@ -1,0 +1,4 @@
+/* VCOM flicker fix: match Sharp datasheet 60 Hz EXTCOMIN spec (17ms toggle). */
+&nice_view {
+    serial-vcom-interval = <17>;
+};

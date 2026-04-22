@@ -250,7 +250,14 @@
 };
 
 // All other priorities should be two levels lower than their defaults
-// (which is usually 1 and should be demoted to 3)
+// (which is usually 1 and should be demoted to 3).
+//
+// NOTE: With SoftDevice Controller, MPSL ignores the DT priority overrides
+// for TIMER0, RTC0, and RADIO — it registers its own ISRs at priority 0.
+// The BT_CTLR_LLL_PRIO / BT_CTLR_ULL_* Kconfig defaults from the PS/2
+// driver are also irrelevant with SDC (those control the open-source LL).
+// UART0 is raised to priority 1 so PS/2 RX gets serviced between MPSL
+// radio-event ISR bursts, reducing byte-loss risk.
 &clock {
     interrupts = < 0 3 >;
 };
@@ -264,7 +271,7 @@
 };
 
 &uart0 {
-    interrupts = < 2 3 >;
+    interrupts = < 2 1 >;
 };
 
 &i2c0 {

@@ -1,0 +1,6 @@
+draw_config:
+  dark_mode: auto
+  n_columns: 1
+parse_config:
+  zmk_keycode_map:
+    studio_unlock: Studio
