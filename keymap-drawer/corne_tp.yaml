@@ -40,7 +40,7 @@ layers:
   - {t: BACKSPACE, s: DEL}
   - SPACE
   - SYM
-  - NUM
+  - '&td_num_fun'
   - ENTER
   - TAB
   WIN:
@@ -211,8 +211,8 @@ layers:
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
-  - {t: ▽, type: trans}
   - {type: held}
+  - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   FUN:
@@ -255,6 +255,6 @@ layers:
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {type: held}
-  - {type: held}
+  - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}

@@ -3,6 +3,10 @@
 Personal ZMK config for Corne with trackpoint, paired with custom fork
 [`dgct/zmk`](https://github.com/dgct/zmk).
 
+## Keymap
+
+![Keymap](keymap-drawer/corne_tp.svg)
+
 ## Local builds
 
 Two paths:

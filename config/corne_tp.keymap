@@ -124,6 +124,20 @@
             hold-trigger-key-positions = <36 37 38 39 40 41 0 1 2 3 4 5 12 13 14 15 16 17 24 25 26 27 28 29>;
             hold-trigger-on-release;
         };
+
+        mo_lock: mo_lock {
+            compatible = "zmk,behavior-momentary-layer";
+            #binding-cells = <1>;
+            locking;
+        };
+
+        td_num_fun: td_num_fun {
+            compatible = "zmk,behavior-tap-dance";
+            label = "TD_NUM_FUN";
+            #binding-cells = <0>;
+            tapping-term-ms = <200>;
+            bindings = <&mo 4>, <&mo_lock 5>;
+        };
     };
 
     keymap {
@@ -135,7 +149,7 @@
 &kp ESC    &kp B                &kp L            &kp D            &kp W               &kp Q    &kp J  &kp F                &kp O             &kp U             &kp APOS              &caps_word
 &kp LSHFT  &hml LEFT_CONTROL N  &hml LEFT_ALT R  &hml LEFT_GUI T  &shtl LEFT_SHIFT S  &kp G    &kp Y  &shtr RIGHT_SHIFT H  &hmr RIGHT_GUI A  &hmr RIGHT_ALT E  &hmr RIGHT_CONTROL I  &kp RIGHT_CONTROL
 &kp LGUI   &kp Z                &kp X            &kp M            &kp C               &kp V    &kp K  &kp P                &kp COMMA         &kp PERIOD        &kp SLASH             &kp RIGHT_ALT
-                                                 &bkdel           &kp SPACE           &mo 3    &mo 4  &kp ENTER            &kp TAB
+                                                 &bkdel           &kp SPACE           &mo 3    &td_num_fun  &kp ENTER            &kp TAB
             >;
         };
 
