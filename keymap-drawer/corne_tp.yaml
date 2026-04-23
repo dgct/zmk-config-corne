@@ -226,7 +226,7 @@ layers:
   - ''
   - ''
   - ''
-  - OUT TOG
+  - BT NXT
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - F5
@@ -238,7 +238,7 @@ layers:
   - ''
   - ''
   - ''
-  - BT NXT
+  - OUT TOG
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
   - F9
