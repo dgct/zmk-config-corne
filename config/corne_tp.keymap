@@ -80,6 +80,8 @@
             tapping-term-ms = <280>;
             #binding-cells = <2>;
             bindings = <&kp>, <&kp>;
+
+            quick-tap-ms = <175>;
         };
 
         shtr: shift_tap_right {
@@ -91,6 +93,8 @@
             tapping-term-ms = <280>;
             #binding-cells = <2>;
             bindings = <&kp>, <&kp>;
+
+            quick-tap-ms = <175>;
         };
 
         hml: home_mod_left {
