@@ -1,0 +1,260 @@
+layout: {zmk_keyboard: corne_tp}
+layers:
+  MAC:
+  - ESC
+  - B
+  - L
+  - D
+  - W
+  - Q
+  - J
+  - F
+  - O
+  - U
+  - APOS
+  - '&caps_word'
+  - LSHFT
+  - {t: N, h: LEFT CONTROL}
+  - {t: R, h: LEFT ALT}
+  - {t: T, h: LEFT GUI}
+  - {t: S, h: LEFT SHIFT}
+  - G
+  - Y
+  - {t: H, h: RIGHT SHIFT}
+  - {t: A, h: RIGHT GUI}
+  - {t: E, h: RIGHT ALT}
+  - {t: I, h: RIGHT CONTROL}
+  - RIGHT CONTROL
+  - LGUI
+  - Z
+  - X
+  - M
+  - C
+  - V
+  - K
+  - P
+  - COMMA
+  - PERIOD
+  - SLASH
+  - RIGHT ALT
+  - {t: BACKSPACE, s: DEL}
+  - SPACE
+  - SYM
+  - NUM
+  - ENTER
+  - TAB
+  WIN:
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: N, h: LEFT GUI}
+  - {t: ▽, type: trans}
+  - {t: T, h: LEFT CONTROL}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: A, h: RIGHT CONTROL}
+  - {t: ▽, type: trans}
+  - {t: I, h: RIGHT GUI}
+  - RIGHT GUI
+  - LEFT CONTROL
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  GAME:
+  - {t: ▽, type: trans}
+  - Q
+  - W
+  - E
+  - R
+  - T
+  - Y
+  - U
+  - I
+  - O
+  - P
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - A
+  - S
+  - D
+  - F
+  - G
+  - H
+  - J
+  - K
+  - L
+  - SEMI
+  - RIGHT GUI
+  - LEFT CONTROL
+  - Z
+  - X
+  - C
+  - V
+  - B
+  - N
+  - M
+  - COMMA
+  - DOT
+  - FSLH
+  - {t: ▽, type: trans}
+  - TAB
+  - {t: ▽, type: trans}
+  - NUM
+  - SYM
+  - {t: ▽, type: trans}
+  - BACKSPACE
+  SYM:
+  - {t: ▽, type: trans}
+  - GRAVE
+  - LESS THAN
+  - GREATER THAN
+  - DOUBLE QUOTES
+  - CARET
+  - AT SIGN
+  - SINGLE QUOTE
+  - LEFT BRACKET
+  - RIGHT BRACKET
+  - PERCENT
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - EXCLAMATION
+  - MINUS
+  - PLUS
+  - EQUAL
+  - AMPS
+  - POUND
+  - COLON
+  - LEFT PARENTHESIS
+  - RIGHT PARENTHESIS
+  - SEMI
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - TILDE
+  - PERIOD
+  - SLASH
+  - ASTRK
+  - PIPE
+  - DOLLAR
+  - UNDER
+  - LBRC
+  - RBRC
+  - BACKSLASH
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {type: held}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  NUM:
+  - {t: ▽, type: trans}
+  - '1'
+  - '2'
+  - '3'
+  - '4'
+  - '5'
+  - '6'
+  - '7'
+  - '8'
+  - '9'
+  - '0'
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - ''
+  - '&mkp MCLK'
+  - '&mkp RCLK'
+  - '&mkp LCLK'
+  - ''
+  - ''
+  - '4'
+  - '5'
+  - '6'
+  - DOT
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - ''
+  - ''
+  - ''
+  - ''
+  - ''
+  - '0'
+  - '1'
+  - '2'
+  - '3'
+  - MINUS
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {type: held}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  FUN:
+  - {t: ▽, type: trans}
+  - F1
+  - F2
+  - F3
+  - F4
+  - {t: GAME, h: toggle}
+  - ''
+  - ''
+  - ''
+  - ''
+  - OUT TOG
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - F5
+  - F6
+  - F7
+  - F8
+  - {t: WIN, h: toggle}
+  - ''
+  - ''
+  - ''
+  - ''
+  - BT NXT
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - F9
+  - F10
+  - F11
+  - F12
+  - ''
+  - ''
+  - ''
+  - ''
+  - '&studio_unlock'
+  - BT CLR
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
+  - {type: held}
+  - {type: held}
+  - {t: ▽, type: trans}
+  - {t: ▽, type: trans}
