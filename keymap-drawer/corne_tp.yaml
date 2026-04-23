@@ -249,7 +249,7 @@ layers:
   - ''
   - ''
   - ''
-  - '&studio_unlock'
+  - ''
   - BT CLR
   - {t: ▽, type: trans}
   - {t: ▽, type: trans}
