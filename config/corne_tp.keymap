@@ -135,7 +135,7 @@
             compatible = "zmk,behavior-tap-dance";
             label = "TD_NUM_FUN";
             #binding-cells = <0>;
-            tapping-term-ms = <200>;
+            tapping-term-ms = <280>;
             bindings = <&mo 4>, <&mo_lock 5>;
         };
     };
@@ -146,9 +146,9 @@
         default_layer {
             display-name = "MAC";
             bindings = <
-&kp ESC    &kp B                &kp L            &kp D            &kp W               &kp Q    &kp J  &kp F                &kp O             &kp U             &kp APOS              &caps_word
-&kp LSHFT  &hml LEFT_CONTROL N  &hml LEFT_ALT R  &hml LEFT_GUI T  &shtl LEFT_SHIFT S  &kp G    &kp Y  &shtr RIGHT_SHIFT H  &hmr RIGHT_GUI A  &hmr RIGHT_ALT E  &hmr RIGHT_CONTROL I  &kp RIGHT_CONTROL
-&kp LGUI   &kp Z                &kp X            &kp M            &kp C               &kp V    &kp K  &kp P                &kp COMMA         &kp PERIOD        &kp SLASH             &kp RIGHT_ALT
+&kp ESC    &kp B                &kp L            &kp D            &kp W               &kp Q    &kp J        &kp F                &kp O             &kp U             &kp APOS              &caps_word
+&kp LSHFT  &hml LEFT_CONTROL N  &hml LEFT_ALT R  &hml LEFT_GUI T  &shtl LEFT_SHIFT S  &kp G    &kp Y        &shtr RIGHT_SHIFT H  &hmr RIGHT_GUI A  &hmr RIGHT_ALT E  &hmr RIGHT_CONTROL I  &kp RIGHT_CONTROL
+&kp LGUI   &kp Z                &kp X            &kp M            &kp C               &kp V    &kp K        &kp P                &kp COMMA         &kp PERIOD        &kp SLASH             &kp RIGHT_ALT
                                                  &bkdel           &kp SPACE           &mo 3    &td_num_fun  &kp ENTER            &kp TAB
             >;
         };
