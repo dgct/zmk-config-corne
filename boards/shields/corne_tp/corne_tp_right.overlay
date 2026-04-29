@@ -549,6 +549,8 @@
 		status = "disabled";
         compatible = "zmk,input-mouse-ps2";
 
+        sampling-rate = <200>;
+
 #ifdef MOUSE_PS2_DRIVER_UART
 	    ps2-device = <&uart_ps2>;
 #else
