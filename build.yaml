@@ -19,7 +19,7 @@ include:
     artifact-name: corne_tp_left_nice_view-nice_nano-zmk
   - board: nice_nano//zmk
     shield: corne_tp_right
-    snippet: softdevice-controller
+    snippet: softdevice-controller zmk-usb-logging
     artifact-name: corne_tp_right-nice_nano-zmk
   - board: nice_nano//zmk
     shield: settings_reset
